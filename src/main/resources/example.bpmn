@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1c71r9z"
+                  targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.5.0">
+    <bpmn:process id="Process_0cio40f" isExecutable="true">
+        <bpmn:startEvent id="StartEvent_1" name="Deckenlampe geschaltet">
+            <bpmn:outgoing>SequenceFlow_0kadz9e</bpmn:outgoing>
+            <bpmn:signalEventDefinition id="SignalEventDefinition_0p87afj" signalRef="Signal_15m243f"/>
+        </bpmn:startEvent>
+        <bpmn:exclusiveGateway id="ExclusiveGateway_13s26kq" default="SequenceFlow_08b5xuz">
+            <bpmn:incoming>SequenceFlow_0kadz9e</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_1buwwji</bpmn:outgoing>
+            <bpmn:outgoing>SequenceFlow_08b5xuz</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="SequenceFlow_0kadz9e" sourceRef="StartEvent_1" targetRef="ExclusiveGateway_13s26kq"/>
+        <bpmn:sequenceFlow id="SequenceFlow_1buwwji" name="Deckenlampe AN" sourceRef="ExclusiveGateway_13s26kq"
+                           targetRef="ExclusiveGateway_0ll11ay">
+            <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Haus_Wohnzimmer_Lampe_Decke_payload == "ON"}
+            </bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:endEvent id="EndEvent_06vbz48">
+            <bpmn:incoming>SequenceFlow_1p4jhcj</bpmn:incoming>
+            <bpmn:incoming>SequenceFlow_08b5xuz</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_08b5xuz" name="Deckenlampe AUS" sourceRef="ExclusiveGateway_13s26kq"
+                           targetRef="EndEvent_06vbz48"/>
+        <bpmn:parallelGateway id="ExclusiveGateway_0ll11ay">
+            <bpmn:incoming>SequenceFlow_1buwwji</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_1kfdukl</bpmn:outgoing>
+            <bpmn:outgoing>SequenceFlow_0n5f8fa</bpmn:outgoing>
+        </bpmn:parallelGateway>
+        <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_10oyr62" name="Würfellampe anschalten">
+            <bpmn:incoming>SequenceFlow_1kfdukl</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_1kfzvgz</bpmn:outgoing>
+            <bpmn:messageEventDefinition id="MessageEventDefinition_0u5vdnc" messageRef="Message_0vp1wql"
+                                         camunda:delegateExpression="${mqttThrowEvent}"/>
+        </bpmn:intermediateThrowEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_1kfdukl" sourceRef="ExclusiveGateway_0ll11ay"
+                           targetRef="IntermediateThrowEvent_10oyr62"/>
+        <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0si4n7s" name="Kameralampe anschalten">
+            <bpmn:incoming>SequenceFlow_0n5f8fa</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_0oaivub</bpmn:outgoing>
+            <bpmn:messageEventDefinition id="MessageEventDefinition_0rkxo87" messageRef="Message_0wtq4kh"
+                                         camunda:delegateExpression="${mqttThrowEvent}"/>
+        </bpmn:intermediateThrowEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_0n5f8fa" sourceRef="ExclusiveGateway_0ll11ay"
+                           targetRef="IntermediateThrowEvent_0si4n7s"/>
+        <bpmn:sequenceFlow id="SequenceFlow_0oaivub" sourceRef="IntermediateThrowEvent_0si4n7s"
+                           targetRef="ExclusiveGateway_04eg519"/>
+        <bpmn:parallelGateway id="ExclusiveGateway_04eg519">
+            <bpmn:incoming>SequenceFlow_0oaivub</bpmn:incoming>
+            <bpmn:incoming>SequenceFlow_1kfzvgz</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_1p4jhcj</bpmn:outgoing>
+        </bpmn:parallelGateway>
+        <bpmn:sequenceFlow id="SequenceFlow_1kfzvgz" sourceRef="IntermediateThrowEvent_10oyr62"
+                           targetRef="ExclusiveGateway_04eg519"/>
+        <bpmn:sequenceFlow id="SequenceFlow_1p4jhcj" sourceRef="ExclusiveGateway_04eg519" targetRef="EndEvent_06vbz48"/>
+    </bpmn:process>
+    <bpmn:message id="Message_0vp1wql" name="Haus/Wohnzimmer/Lampe/Wuerfel:command:ON"/>
+    <bpmn:signal id="Signal_15m243f" name="Haus/Wohnzimmer/Lampe/Decke"/>
+    <bpmn:message id="Message_0wtq4kh" name="Haus/Wohnzimmer/Lampe/Kamera:command:ON"/>
+    <bpmn:message id="Message_1y8889e" name="Haus/Wohnzimmer/Lampe/Kamera:command:OFF"/>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0cio40f">
+            <bpmndi:BPMNShape id="StartEvent_0ypg3rb_di" bpmnElement="StartEvent_1">
+                <dc:Bounds x="152" y="179" width="36" height="36"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="137" y="222" width="68" height="27"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="ExclusiveGateway_13s26kq_di" bpmnElement="ExclusiveGateway_13s26kq"
+                              isMarkerVisible="true">
+                <dc:Bounds x="275" y="172" width="50" height="50"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="SequenceFlow_0kadz9e_di" bpmnElement="SequenceFlow_0kadz9e">
+                <di:waypoint x="188" y="197"/>
+                <di:waypoint x="275" y="197"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="SequenceFlow_1buwwji_di" bpmnElement="SequenceFlow_1buwwji">
+                <di:waypoint x="325" y="197"/>
+                <di:waypoint x="475" y="197"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="345" y="179" width="86" height="14"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="EndEvent_06vbz48_di" bpmnElement="EndEvent_06vbz48">
+                <dc:Bounds x="742" y="179" width="36" height="36"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="817" y="286" width="26" height="27"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="SequenceFlow_08b5xuz_di" bpmnElement="SequenceFlow_08b5xuz">
+                <di:waypoint x="300" y="222"/>
+                <di:waypoint x="300" y="330"/>
+                <di:waypoint x="760" y="330"/>
+                <di:waypoint x="760" y="215"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="310" y="293" width="68" height="27"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="ParallelGateway_03fcgiz_di" bpmnElement="ExclusiveGateway_0ll11ay">
+                <dc:Bounds x="475" y="172" width="50" height="50"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="IntermediateThrowEvent_13vzftw_di" bpmnElement="IntermediateThrowEvent_10oyr62">
+                <dc:Bounds x="552" y="122" width="36" height="36"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="539" y="84.5" width="62" height="27"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="SequenceFlow_1kfdukl_di" bpmnElement="SequenceFlow_1kfdukl">
+                <di:waypoint x="500" y="172"/>
+                <di:waypoint x="500" y="140"/>
+                <di:waypoint x="552" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="IntermediateThrowEvent_0si4n7s_di" bpmnElement="IntermediateThrowEvent_0si4n7s">
+                <dc:Bounds x="552" y="232" width="36" height="36"/>
+                <bpmndi:BPMNLabel>
+                    <dc:Bounds x="537" y="275" width="69" height="27"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="SequenceFlow_0n5f8fa_di" bpmnElement="SequenceFlow_0n5f8fa">
+                <di:waypoint x="500" y="222"/>
+                <di:waypoint x="500" y="250"/>
+                <di:waypoint x="552" y="250"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="SequenceFlow_0oaivub_di" bpmnElement="SequenceFlow_0oaivub">
+                <di:waypoint x="588" y="250"/>
+                <di:waypoint x="630" y="250"/>
+                <di:waypoint x="630" y="222"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="ParallelGateway_0hvqwv1_di" bpmnElement="ExclusiveGateway_04eg519">
+                <dc:Bounds x="605" y="172" width="50" height="50"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="SequenceFlow_1kfzvgz_di" bpmnElement="SequenceFlow_1kfzvgz">
+                <di:waypoint x="588" y="140"/>
+                <di:waypoint x="630" y="140"/>
+                <di:waypoint x="630" y="172"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="SequenceFlow_1p4jhcj_di" bpmnElement="SequenceFlow_1p4jhcj">
+                <di:waypoint x="655" y="197"/>
+                <di:waypoint x="742" y="197"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</bpmn:definitions>

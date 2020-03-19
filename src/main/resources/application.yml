@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+camunda:
+  bpm:
+    admin-user:
+      id: admin
+      password: admin
+    history-level: none
+
+mqtt:
+  broker: tcp://mosquitto:1883
